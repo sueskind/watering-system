@@ -1,1 +1,4 @@
+.idea/
+venv/
+
 controller/controller.ino

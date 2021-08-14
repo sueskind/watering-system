@@ -1,2 +1,8 @@
 const char* ssid = "";
 const char* password = "";
+
+#define SENSORS_COUNT 4
+#define PUMPS_COUNT 4
+
+byte sensorPins[] = {34, 35, 32, 33};
+byte pumpPins[] = {21, 19, 18, 5};

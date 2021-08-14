@@ -3,11 +3,6 @@
 #include <ArduinoJson.h>
 
 #define UPDATE_INTERVAL 100
-#define SENSORS_COUNT 4
-#define PUMPS_COUNT 4
-
-byte sensorPins[] = {34, 35, 32, 33};
-byte pumpPins[] = {19, 18, 5, 17};
 
 WebServer server(80); // port
 long lastUpdate = 0;
@@ -50,13 +45,12 @@ void api_water() {
             Serial.println("HTTP 400 GET /water");
 
         } else {
+            server.send(200);
+            Serial.println("HTTP 200 GET /water");
+
             digitalWrite(pumpPins[pumpNumber], LOW);
             delay(duration);
             digitalWrite(pumpPins[pumpNumber], HIGH);
-
-
-            server.send(200);
-            Serial.println("HTTP 200 GET /water");
         }
     }
 }

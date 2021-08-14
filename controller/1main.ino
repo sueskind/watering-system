@@ -1,6 +1,6 @@
 #include <WiFi.h>
 
-#define UPDATE_INTERVAL 200
+#define UPDATE_INTERVAL 100
 
 void setup() {
     Serial.begin(115200);
@@ -21,9 +21,9 @@ void setup() {
     Serial.print("IP address: ");
     Serial.println(WiFi.localIP());
 
-
-    server.on("/", HTTP_GET, get);
-    server.onNotFound(notFound);
+    server.on("/measure", HTTP_GET, api_measure);
+    server.on("/water", HTTP_GET, api_water);
+    server.onNotFound(api_notFound);
 
     server.begin();
     Serial.println("HTTP server started\n");

@@ -4,6 +4,7 @@
 
 #define UPDATE_INTERVAL 100
 #define SENSORS_COUNT 4
+#define PUMPS_COUNT 4
 
 byte sensorPins[] = {34, 35, 32, 33};
 byte pumpPins[] = {19, 18, 5, 17};
@@ -16,7 +17,7 @@ long lastUpdate = 0;
 void api_measure() {
     StaticJsonDocument<64> json;
 
-    for (byte i = 0; i < SENSORS_COUNT; i++) {
+    for (int i = 0; i < SENSORS_COUNT; i++) {
         json.add(analogRead(sensorPins[i]));
     }
 
@@ -28,8 +29,36 @@ void api_measure() {
 }
 
 void api_water() {
-    server.send(200);
-    Serial.println("HTTP 200 GET /water");
+    if (!server.hasArg("pumpNumber")) {
+        server.send(400, "text/plain", "Bad request: Missing parameter 'pumpNumber'");
+        Serial.println("HTTP 400 GET /water");
+
+    } else if (!server.hasArg("duration")) {
+        server.send(400, "text/plain", "Bad request: Missing parameter 'duration'");
+        Serial.println("HTTP 400 GET /water");
+
+    } else {
+        int pumpNumber = server.arg("pumpNumber").toInt();
+        long duration = server.arg("duration").toInt();
+
+        if (pumpNumber < 0 || pumpNumber >= PUMPS_COUNT) {
+            server.send(400, "text/plain", "Bad request: Illegal parameter value: 'pumpNumber'");
+            Serial.println("HTTP 400 GET /water");
+
+        } else if (duration < 0) {
+            server.send(400, "text/plain", "Bad request: Illegal parameter value: 'duration'");
+            Serial.println("HTTP 400 GET /water");
+
+        } else {
+            digitalWrite(pumpPins[pumpNumber], LOW);
+            delay(duration);
+            digitalWrite(pumpPins[pumpNumber], HIGH);
+
+
+            server.send(200);
+            Serial.println("HTTP 200 GET /water");
+        }
+    }
 }
 
 void api_notFound() {
@@ -39,6 +68,7 @@ void api_notFound() {
 
 
 void setup() {
+
     Serial.begin(115200);
     while (!Serial) {;}
     Serial.print("Connecting to ");
@@ -67,9 +97,14 @@ void setup() {
 
 
 void loop() {
+    // make sure that all water is off
+    for (int i = 0; i < PUMPS_COUNT; i++) {
+        pinMode(pumpPins[i], OUTPUT);
+        digitalWrite(pumpPins[i], HIGH);
+    }
+
     if (millis() - lastUpdate > UPDATE_INTERVAL) {
         server.handleClient();
         lastUpdate = millis();
     }
-
 }

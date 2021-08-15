@@ -1,0 +1,31 @@
+{
+  "controllers": [
+    {
+      "hostname": "192.168.178.15",
+      "pollingInterval": 5,
+      "plants": [
+        {
+          "sensors": [
+            {
+              "number": 0,
+              "threshold": 1500,
+              "thresholdMode": "floor",
+              "medianWindow": 5,
+              "meanWindow": 60
+            }
+          ],
+          "sensorMode": "mean",
+          "pumps": [
+            {
+              "number": 0,
+              "duration": 5,
+              "waitMin": 86400,
+              "waitMax": 259200
+            }
+          ],
+          "pumpMode": "all"
+        }
+      ]
+    }
+  ]
+}

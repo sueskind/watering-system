@@ -2,3 +2,5 @@
 venv/
 
 controller/controller.ino
+
+config.json

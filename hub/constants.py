@@ -7,10 +7,8 @@ class ThresholdModes(Enum):
 
 
 class SensorModes(Enum):
-    MEAN = "mean"
-    MEDIAN = "median"
-    AND = "and"
-    OR = "or"
+    ALL = "all"
+    ANY = "any"
 
 
 class PumpModes(Enum):

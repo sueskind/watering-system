@@ -1,8 +1,8 @@
 {
   "controllers": [
     {
-      "hostname": "192.168.178.15",
-      "pollingInterval": 5,
+      "hostname": "192.168.178.24",
+      "pollingInterval": 0.2,
       "plants": [
         {
           "sensors": [
@@ -10,20 +10,27 @@
               "number": 0,
               "threshold": 1500,
               "thresholdMode": "floor",
-              "medianWindow": 5,
-              "meanWindow": 60
+              "medianWindow": 3,
+              "meanWindow": 10
+            },
+            {
+              "number": 1,
+              "threshold": 1500,
+              "thresholdMode": "floor",
+              "medianWindow": 3,
+              "meanWindow": 10
             }
           ],
-          "sensorMode": "mean",
+          "sensorMode": "all",
           "pumps": [
             {
               "number": 0,
-              "duration": 5,
-              "waitMin": 86400,
-              "waitMax": 259200
+              "duration": 5
             }
           ],
-          "pumpMode": "all"
+          "pumpMode": "all",
+          "pumpWaitMin": 7,
+          "pumpWaitMax": 259200
         }
       ]
     }

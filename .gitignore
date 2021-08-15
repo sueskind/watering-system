@@ -3,4 +3,6 @@ venv/
 
 controller/controller.ino
 
+logger/*.csv
+
 config.json

@@ -98,6 +98,14 @@ void loop() {
     }
 
     if (millis() - lastUpdate > UPDATE_INTERVAL) {
+
+        // first check if connection is lost and reconnect in that case
+        if (WiFi.status() != WL_CONNECTED) {
+            Serial.println("Reconnecting to WiFi...");
+            WiFi.disconnect();
+            WiFi.reconnect();
+        }
+
         server.handleClient();
         lastUpdate = millis();
     }

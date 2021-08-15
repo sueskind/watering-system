@@ -63,11 +63,11 @@ void api_notFound() {
 
 void setup() {
 
-    // make sure all pumps are off
+    // initialize pumps as OFF
     for (int i = 0; i < PUMPS_COUNT; i++) {
         pinMode(pumpPins[i], OUTPUT);
         digitalWrite(pumpPins[i], HIGH);
-        pumpUntil[0] = 0;
+        pumpUntil[i] = 0;
     }
 
     Serial.begin(115200);

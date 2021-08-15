@@ -2,10 +2,12 @@
 #include <WebServer.h>
 #include <ArduinoJson.h>
 
-#define UPDATE_INTERVAL 100
+#define REQUESTS_UPDATE_INTERVAL 100
 
 WebServer server(80); // port
 long lastUpdate = 0;
+
+unsigned long pumpUntil[PUMPS_COUNT];
 
 
 // endpoints
@@ -48,9 +50,7 @@ void api_water() {
             server.send(200);
             Serial.println("HTTP 200 GET /water");
 
-            digitalWrite(pumpPins[pumpNumber], LOW);
-            delay(duration);
-            digitalWrite(pumpPins[pumpNumber], HIGH);
+            pumpUntil[pumpNumber] = millis() + duration;
         }
     }
 }
@@ -62,6 +62,13 @@ void api_notFound() {
 
 
 void setup() {
+
+    // make sure all pumps are off
+    for (int i = 0; i < PUMPS_COUNT; i++) {
+        pinMode(pumpPins[i], OUTPUT);
+        digitalWrite(pumpPins[i], HIGH);
+        pumpUntil[0] = 0;
+    }
 
     Serial.begin(115200);
     while (!Serial) {;}
@@ -91,13 +98,18 @@ void setup() {
 
 
 void loop() {
-    // make sure that all water is off
+
+    // check if water needs to be pumped
     for (int i = 0; i < PUMPS_COUNT; i++) {
-        pinMode(pumpPins[i], OUTPUT);
-        digitalWrite(pumpPins[i], HIGH);
+        if (pumpUntil[i] > millis()) {
+            digitalWrite(pumpPins[i], LOW);
+        } else {
+            digitalWrite(pumpPins[i], HIGH);
+        }
     }
 
-    if (millis() - lastUpdate > UPDATE_INTERVAL) {
+    // handle webserver stuff
+    if (millis() - lastUpdate > REQUESTS_UPDATE_INTERVAL) {
 
         // first check if connection is lost and reconnect in that case
         if (WiFi.status() != WL_CONNECTED) {

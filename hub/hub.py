@@ -33,6 +33,7 @@ def pump(hostname, pumps, mode):
             "pumpNumber": p["number"],
             "duration": int(p["duration"] * 1000)
         }
+        print(f"Pumping {hostname} {params}")
         req.get(f"http://{hostname}/water", params=params)
 
 

@@ -45,7 +45,7 @@ def should_pump(last_pump_time, plant, measurements):
         sensor_measurements = sensor_measurements.rolling(median_window, min_periods=1).median()
         sensor_measurements = sensor_measurements.rolling(mean_window, min_periods=1).mean()
 
-        measurement = sensor_measurements[-1]
+        measurement = sensor_measurements.iloc[-1]
         sensors_would_pump.append(
             (sensor["thresholdMode"] == ThresholdModes.FLOOR and measurement < sensor["threshold"]) or
             (sensor["thresholdMode"] == ThresholdModes.CEILING and measurement > sensor["threshold"])

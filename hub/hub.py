@@ -8,9 +8,7 @@ import pandas as pd
 import requests as req
 
 from constants import SensorModes, ThresholdModes, PumpModes
-
-CONFIG_PATH = "../config.json"
-SLEEP = 0.05
+from settings import CONFIG_PATH, REFRESH_INTERVAL
 
 
 def measure(hostname, sensor_numbers):
@@ -92,7 +90,7 @@ def main():
 
                 last_measurement_times[hostname] = time.time()
 
-        time.sleep(SLEEP)
+        time.sleep(REFRESH_INTERVAL)
 
 
 if __name__ == '__main__':

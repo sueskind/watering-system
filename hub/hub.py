@@ -13,7 +13,7 @@ from settings import CONFIG_PATH, REFRESH_INTERVAL
 
 def measure(hostname, sensor_numbers):
     values = req.get(f"http://{hostname}/measure").json()
-    return np.array(values)[sensor_numbers]
+    return [time.time()] + list(np.array(values)[sensor_numbers])
 
 
 def pump(hostname, pumps, mode):
@@ -68,7 +68,7 @@ def main():
                                                     for plant in controller["plants"]
                                                     for sensor in plant["sensors"]})
                       for controller in config["controllers"]}
-    all_measurements = {controller["hostname"]: pd.DataFrame(columns=sensor_numbers[controller["hostname"]])
+    all_measurements = {controller["hostname"]: pd.DataFrame(columns=["time"] + sensor_numbers[controller["hostname"]])
                         for controller in config["controllers"]}
 
     while True:
@@ -79,8 +79,7 @@ def main():
             measurements = all_measurements[hostname]
 
             if time.time() - last_measurement_times[hostname] > controller["pollingInterval"]:
-                sensor_values = measure(hostname, sensor_numbers[hostname])
-                measurements.loc[len(measurements)] = sensor_values
+                measurements.loc[len(measurements)] = measure(hostname, sensor_numbers[hostname])
 
                 for plant_number, plant in enumerate(controller["plants"]):
 

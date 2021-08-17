@@ -11,7 +11,12 @@ import pandas as pd
 import requests as req
 
 from constants import SensorModes, ThresholdModes, PumpModes
-from settings import CONFIG_PATH, REFRESH_INTERVAL, MEASUREMENTS_DIR, SAVE_INTERVAL
+from settings import CONFIG_PATH, REFRESH_INTERVAL, SAVE_INTERVAL, SESSIONS_DIR
+
+
+def save_measurements(session_dir, all_measurements):
+    with open(os.path.join(session_dir, f"measurements.pkl"), "wb") as f:
+        pickle.dump(all_measurements, f)
 
 
 def measure(hostname, sensor_numbers):
@@ -60,17 +65,12 @@ def should_pump(last_pump_time, plant, measurements):
         return any(sensors_would_pump)
 
 
-def save(session_name, all_measurements):
-    os.makedirs(MEASUREMENTS_DIR, exist_ok=True)
-    with open(os.path.join(MEASUREMENTS_DIR, f"{session_name}.pkl"), "wb") as f:
-        pickle.dump(all_measurements, f)
-
-
 def main():
     with open(CONFIG_PATH, "r") as f:
         config = json.load(f)
 
-    session_name = f"session_{dt.datetime.now():%Y-%m-%d_%H-%M-%S}"
+    session_dir = os.path.join(SESSIONS_DIR, f"session_{dt.datetime.now():%Y-%m-%d_%H-%M-%S}")
+    os.makedirs(session_dir)
     last_save_time = 0
 
     last_measurement_times = defaultdict(float)
@@ -102,7 +102,7 @@ def main():
                 last_measurement_times[hostname] = time.time()
 
         if time.time() - last_save_time > SAVE_INTERVAL:
-            save(session_name, all_measurements)
+            save_measurements(session_dir, all_measurements)
             last_save_time = time.time()
 
         time.sleep(REFRESH_INTERVAL)

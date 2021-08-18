@@ -113,9 +113,22 @@ void loop() {
 
         // first check if connection is lost and reconnect in that case
         if (WiFi.status() != WL_CONNECTED) {
+
+            // turn off all pumping!
+            for (int i = 0; i < PUMPS_COUNT; i++) {
+                pumpUntil[i] = 0;
+            }
+
             Serial.println("Reconnecting to WiFi...");
             WiFi.disconnect();
             WiFi.reconnect();
+            Serial.print("Reconnecting to WiFi ");
+            while (WiFi.status() != WL_CONNECTED) {
+                delay(500);
+                Serial.print(".");
+            }
+            Serial.println("");
+            Serial.println("Reconnected.");
         }
 
         server.handleClient();

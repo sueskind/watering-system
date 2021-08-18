@@ -2,8 +2,7 @@ import time
 
 import requests as req
 
-SENSORS_CONTROLLERS = {"192.168.178.15": [0, 1]}  # example
-INTERVAL = 1
+from settings import SENSORS_CONTROLLERS, INTERVAL
 
 
 def main():
